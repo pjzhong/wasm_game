@@ -1,0 +1,26 @@
+[package]
+name = "binding_events"
+version = "0.1.0"
+authors = ["pj_zhong <pj_zhong@163.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen="0.2.63"
+js-sys="0.3.40"
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+    "Document",
+    "Event",
+    "HtmlCanvasElement",
+    "HtmlElement",
+    "KeyEvent",
+    "MouseEvent",
+    "Window",
+]

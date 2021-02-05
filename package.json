@@ -1,0 +1,15 @@
+{
+  "name": "binding_eventsd ",
+  "collaborators": [
+    "pj_zhong <pj_zhong@163.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "binding_eventsd_bg.wasm",
+    "binding_eventsd.js",
+    "binding_eventsd.d.ts"
+  ],
+  "module": "binding_eventsd.js",
+  "types": "binding_eventsd.d.ts",
+  "sideEffects": false
+}

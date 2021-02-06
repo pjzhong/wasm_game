@@ -22,6 +22,9 @@ features = [
     "HtmlElement",
     "KeyEvent",
     "MouseEvent",
-    "WebGl2RenderingContext"
+    "WebGl2RenderingContext",
+    "WebGlBuffer",
+    "WebGlShader",
+    "WebGlProgram",
     "Window",
 ]

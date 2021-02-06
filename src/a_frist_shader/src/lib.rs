@@ -7,6 +7,7 @@ use wasm_bindgen::JsCast;
 use web_sys::{window, Event, HtmlCanvasElement, KeyEvent, MouseEvent};
 
 mod app;
+mod triangle;
 
 // Pull in the console.log function so we can debug things more easily
 #[wasm_bindgen]

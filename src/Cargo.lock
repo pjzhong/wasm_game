@@ -82,6 +82,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "passing_in_uniforms"
+version = "0.1.0"
+dependencies = [
+ "js-sys",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"

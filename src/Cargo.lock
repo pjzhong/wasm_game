@@ -19,6 +19,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "binding_textures"
+version = "0.1.0"
+dependencies = [
+ "js-sys",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "build_and_loading_wasm"
 version = "0.1.0"
 dependencies = [

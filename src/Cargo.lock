@@ -133,6 +133,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "swoop_10_engine_trails"
+version = "0.1.0"
+dependencies = [
+ "itertools",
+ "js-sys",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "swoop_11_wingtip_trails_and_optimizations"
+version = "0.1.0"
+dependencies = [
+ "itertools",
+ "js-sys",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "swoop_1_drawing_the_player"
 version = "0.1.0"
 dependencies = [
@@ -200,6 +220,16 @@ dependencies = [
 
 [[package]]
 name = "swoop_8_camera_positioning"
+version = "0.1.0"
+dependencies = [
+ "itertools",
+ "js-sys",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "swoop_9_enemy_racers"
 version = "0.1.0"
 dependencies = [
  "itertools",

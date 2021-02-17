@@ -55,7 +55,7 @@ fn check_collision<'a>(
     ship2: Rc<RefCell<&'a mut Ship>>,
 ) -> Option<CollisionEvent<'a>> {
     let normal = vect_between(&ship1.borrow().position, &ship2.borrow().position);
-    let len = length(normal);
+    let len = length(&normal);
     if len < SHIP_RADIUS * 2.0 {
         Some(CollisionEvent {
             obj1: ship1,

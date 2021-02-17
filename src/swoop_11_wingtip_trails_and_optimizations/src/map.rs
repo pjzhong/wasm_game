@@ -30,7 +30,7 @@ impl Map {
     }
 
     pub fn distance_field(&self, position: Vec2) -> f32 {
-        let course = length(position);
+        let course = length(&position);
         let angle = position.1.atan2(position.0);
 
         let track_radius = self.track_radius(angle);

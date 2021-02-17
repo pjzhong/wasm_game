@@ -8,24 +8,30 @@ pub struct PathPoint {
     pub position: Vec2,
     pub tangent: Vec2,
     pub intensity: f32,
+    pub width: f32,
+    pub brightness: f32,
 }
 
 pub struct EngineTrail {
     path: VecDeque<PathPoint>,
     pub color: (f32, f32, f32, f32),
+    pub width: f32,
+    pub brightness: f32,
     max_length: usize,
     time_since_emit: f32,
     prev_position: Vec2,
 }
 
 impl EngineTrail {
-    pub fn new(color: (f32, f32, f32, f32)) -> Self {
+    pub fn new(color: (f32, f32, f32, f32), width: f32, brightness: f32) -> Self {
         Self {
             path: VecDeque::new(),
             color,
             max_length: NUM_SEGEMENTS,
             prev_position: (0.0, 0.0),
             time_since_emit: 0.0,
+            width,
+            brightness,
         }
     }
 
@@ -39,6 +45,8 @@ impl EngineTrail {
                     position: position,
                     tangent: (0.0, 0.0),
                     intensity: intensity,
+                    brightness: 0.0,
+                    width: 0.0,
                 });
             }
             assert!(self.path.len() == self.max_length)
@@ -63,6 +71,8 @@ impl EngineTrail {
             first.tangent.0 = current_tangent.0 * self.time_since_emit;
             first.tangent.1 = current_tangent.1 * self.time_since_emit;
             first.intensity = intensity;
+            first.brightness = self.brightness;
+            first.width = self.width;
         }
     }
 
@@ -74,9 +84,8 @@ impl EngineTrail {
         (1.0 - self.time_since_emit / TIME_PER_SEGMENT) / ((self.max_length - 2) as f32)
     }
 
-    pub fn path_data_buffers(&self) -> (Vec<f32>, Vec<f32>) {
+    pub fn path_data_buffers(&self) -> Vec<f32> {
         let mut point_buffer = vec![];
-        let mut data_buffer = vec![];
 
         for point in self.path.iter() {
             point_buffer.push(point.position.0);
@@ -84,12 +93,12 @@ impl EngineTrail {
             point_buffer.push(point.tangent.0);
             point_buffer.push(point.tangent.1);
 
-            data_buffer.push(point.intensity);
-            data_buffer.push(0.0);
-            data_buffer.push(0.0);
-            data_buffer.push(0.0);
+            point_buffer.push(point.intensity);
+            point_buffer.push(point.brightness);
+            point_buffer.push(point.width);
+            point_buffer.push(0.0);
         }
 
-        (point_buffer, data_buffer)
+        point_buffer
     }
 }

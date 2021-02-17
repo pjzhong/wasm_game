@@ -1,21 +1,23 @@
 use super::transform::{length, Transform2d, Vec2};
 
 const PREDICT_FACTOR: f32 = 0.6;
-const ZOOM_FACTOR: f32 = 0.625;
+const ZOOM_FACTOR: f32 = 0.825;
 const SMOOTHING: f32 = 0.4;
+/// What the zoom is set to after calling "reset"
+const RESET_ZOOM: f32 = 10.0;
 
 pub struct Camera {
     position: Vec2,
     zoom: f32,
-    target_posiion: Vec2,
-    target_velocity: Vec2,
+    pub target_posiion: Vec2,
+    pub target_velocity: Vec2,
 }
 
 impl Camera {
     pub fn new() -> Self {
         Self {
             position: (0.0, 0.0),
-            zoom: 1.0,
+            zoom: RESET_ZOOM,
             target_posiion: (0.0, 0.0),
             target_velocity: (0.0, 0.0),
         }
@@ -28,21 +30,13 @@ impl Camera {
         self.target_velocity = (0.0, 0.0);
     }
 
-    pub fn set_target_information(&mut self, pos: &Vec2, vel: &Vec2) {
-        self.target_posiion.0 = pos.0;
-        self.target_posiion.1 = pos.1;
-
-        self.target_velocity.0 = vel.0;
-        self.target_velocity.1 = vel.1;
-    }
-
     pub fn update(&mut self, dt: f32) {
         let ideal_position = (
             self.target_posiion.0 + self.target_velocity.0 * PREDICT_FACTOR,
             self.target_posiion.1 + self.target_velocity.1 * PREDICT_FACTOR,
         );
 
-        let velocity = length(self.target_velocity);
+        let velocity = length(&self.target_velocity);
         let ideal_zoom = 1.0 + velocity * ZOOM_FACTOR;
 
         let zoom_err = self.zoom - ideal_zoom;
@@ -57,12 +51,12 @@ impl Camera {
         self.position.1 -= pos_err.1 * dt / SMOOTHING;
     }
 
-    pub fn get_camera_matrix(&self, base_resolution: f32) -> [f32; 9] {
+    pub fn get_camera_matrix(&self) -> [f32; 9] {
         Transform2d::new(
             self.position.0,
             self.position.1,
             0.0,
-            1.0 / base_resolution * self.zoom,
+           self.zoom,
         )
         .to_mat3_array()
     }

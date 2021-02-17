@@ -25,7 +25,7 @@ impl PolarCoordinate {
 
     pub fn from_cartesian(here: Vec2) -> Self {
         let angle = here.1.atan2(here.0);
-        let radius = length(here);
+        let radius = length(&here);
 
         return Self { radius, angle };
     }
@@ -61,11 +61,11 @@ pub fn vect_between(trans1: &Transform2d, trans2: &Transform2d) -> Vec2 {
     (trans1.x - trans2.x, trans1.y - trans2.y)
 }
 
-pub fn length(vect: Vec2) -> f32 {
+pub fn length(vect: &Vec2) -> f32 {
     f32::sqrt(vect.0 * vect.0 + vect.1 * vect.1)
 }
 
 pub fn normalize(vect: Vec2) -> Vec2 {
-    let len = length(vect);
+    let len = length(&vect);
     (vect.0 / len, vect.1 / len)
 }

@@ -95,11 +95,16 @@ impl App {
 
         let mut engine_trails = vec![];
         for ship in ship_entities.iter() {
+              const MAIN_TRAIL_WIDTH: f32 = 0.10;
+            const WINGTIP_TRAIL_WIDTH: f32 = 0.02;
+            const MAIN_TRAIL_BRIGHTNESS: f32 = 0.3;
+            const WINGTIP_TRAIL_BRIGHTNESS: f32 = 1.0;
+
             engine_trails.push(
                 (
-                    EngineTrail::new(ship.color.clone()),
-                    EngineTrail::new(ship.color.clone()),
-                    EngineTrail::new(ship.color.clone()),
+                    EngineTrail::new(ship.color.clone(), MAIN_TRAIL_WIDTH, MAIN_TRAIL_BRIGHTNESS),
+                    EngineTrail::new(ship.color.clone(), WINGTIP_TRAIL_WIDTH, WINGTIP_TRAIL_BRIGHTNESS),
+                    EngineTrail::new(ship.color.clone(),  WINGTIP_TRAIL_WIDTH, WINGTIP_TRAIL_BRIGHTNESS),
                 )
             );
         }
@@ -226,7 +231,7 @@ impl App {
 
             //let num_ships = self.ship_entities.len() - 2;
             for (_, ship) in self.ship_entities[0..].iter_mut().enumerate() {
-                let skill = random();
+                let skill = f32::max(random(), 0.33);
                 calc_ai_control(ship, skill, &self.map);
             }
         }
@@ -238,16 +243,10 @@ impl App {
 
         {
             // camera
-            self.camera.set_target_information(
-                &(
-                    self.ship_entities[0].position.x,
-                    self.ship_entities[0].position.y,
-                ),
-                &(
-                    self.ship_entities[0].velocity.x,
-                    self.ship_entities[0].velocity.y,
-                ),
-            );
+            self.camera.target_posiion.0 = self.ship_entities[0].position.x;
+            self.camera.target_posiion.1 = self.ship_entities[0].position.y;
+            self.camera.target_velocity.0 = self.ship_entities[0].velocity.x;
+            self.camera.target_velocity.1 = self.ship_entities[0].velocity.y;
             self.camera.update(dt as f32);
         }
 
@@ -289,13 +288,13 @@ impl App {
 
             let world_to_camera = self
                 .camera
-                .get_camera_matrix(self.canvas_resolution.1 as f32);
+                .get_camera_matrix();
             let camera_to_clipspace = [
-                self.canvas_resolution.0 as f32,
+                1.0,
                 0.0,
                 0.0,
                 0.0,
-                self.canvas_resolution.1 as f32,
+                (self.canvas_resolution.1 as f32 / self.canvas_resolution.0 as f32),
                 0.0,
                 0.0,
                 0.0,
@@ -304,12 +303,9 @@ impl App {
 
             self.ship_sprite.world_to_camera = world_to_camera;
             self.ship_sprite.camera_to_clipspace = camera_to_clipspace;
-
+            self.ship_sprite.setup(&self.gl);
             for ship in &self.ship_entities {
-                self.ship_sprite.world_to_sprite = ship.position.to_mat3_array();
-                self.ship_sprite.ship_color = ship.color;
-                self.ship_sprite.ship_engine = ship.linear_thrust;
-                self.ship_sprite.render(&self.gl);
+                self.ship_sprite.render(&self.gl, &ship);
             }
 
             let map_sprite_transform = Transform2d::new(0.0, 0.0, 0.0, 1.0);
@@ -324,6 +320,7 @@ impl App {
             self.engine_trail_sprite.world_to_camera = world_to_camera;
             self.engine_trail_sprite.camera_to_clipspace = camera_to_clipspace;
             self.engine_trail_sprite.world_to_sprite = map_sprite_transform.to_mat3_array();
+            self.engine_trail_sprite.setup(&self.gl);
             for engine_trail in &self.engine_trails {
                 self.engine_trail_sprite.render(&self.gl, &engine_trail.0);
                 self.engine_trail_sprite.render(&self.gl, &engine_trail.1);

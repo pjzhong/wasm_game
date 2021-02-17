@@ -9,6 +9,7 @@ out vec4 FragColor;
 
 
 uniform vec4 trail_color;
+uniform float trail_brightness;
 
 
 vec4 neon(float sdf, vec4 color, float glow_width) {
@@ -34,6 +35,6 @@ void main() {
     float falloff = 1.0 - sdf_normal * sdf_tangent;
     falloff += (1.0 - intensity);
     
-    FragColor = neon(falloff, trail_color, 1.0) * 0.3;
+    FragColor = neon(falloff, trail_color, 1.0) * data.y;
 }
 

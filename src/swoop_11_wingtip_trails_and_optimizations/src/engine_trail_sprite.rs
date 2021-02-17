@@ -15,7 +15,6 @@ pub struct EngineTrailSprite {
     uniform_camera_to_clipspace: Option<WebGlUniformLocation>,
 
     uniform_point_buffer: Option<WebGlUniformLocation>,
-    uniform_data_buffer: Option<WebGlUniformLocation>,
     uniform_point_buffer_length: Option<WebGlUniformLocation>,
     uniform_trail_color: Option<WebGlUniformLocation>,
     uniform_trail_percent_offset: Option<WebGlUniformLocation>,
@@ -50,7 +49,6 @@ impl EngineTrailSprite {
         let uniform_camera_to_clipspace = gl.get_uniform_location(&program, "camera_to_clipspace");
 
         let uniform_point_buffer = gl.get_uniform_location(&program, "point_buffer");
-        let uniform_data_buffer = gl.get_uniform_location(&program, "data_buffer");
         let uniform_point_buffer_length = gl.get_uniform_location(&program, "point_buffer_length");
         let uniform_trail_color = gl.get_uniform_location(&program, "trail_color");
         let uniform_trail_percent_offset =
@@ -65,7 +63,6 @@ impl EngineTrailSprite {
             uniform_camera_to_clipspace,
 
             uniform_point_buffer,
-            uniform_data_buffer,
             uniform_point_buffer_length,
             uniform_trail_color,
             uniform_trail_percent_offset,
@@ -76,30 +73,11 @@ impl EngineTrailSprite {
         })
     }
 
-    pub fn render(&mut self, gl: &WebGl2RenderingContext, trail: &EngineTrail) {
+    pub fn setup(&mut self, gl: &WebGl2RenderingContext) {
         gl.use_program(Some(&self.program));
-
         gl.blend_func(WebGl2RenderingContext::ONE, WebGl2RenderingContext::ONE);
 
-        gl.uniform4f(
-            self.uniform_trail_color.as_ref(),
-            trail.color.0,
-            trail.color.1,
-            trail.color.2,
-            trail.color.3,
-        );
-
-        gl.uniform1f(
-            self.uniform_trail_percent_offset.as_ref(),
-            trail.get_percent_offset(),
-        );
-
-        let (point_buffer, data_buffer) = trail.path_data_buffers();
-        gl.uniform1i(self.uniform_point_buffer_length.as_ref(), trail.length());
-        gl.uniform4fv_with_f32_array(self.uniform_point_buffer.as_ref(), &point_buffer);
-        gl.uniform4fv_with_f32_array(self.uniform_data_buffer.as_ref(), &data_buffer);
-
-        gl.uniform_matrix3fv_with_f32_array(
+          gl.uniform_matrix3fv_with_f32_array(
             self.uniform_world_to_sprite.as_ref(),
             true,
             &self.world_to_sprite,
@@ -129,6 +107,25 @@ impl EngineTrailSprite {
             0,     // offset
         );
         gl.enable_vertex_attrib_array(self.attrib_vertex_positions);
+    }
+
+    pub fn render(&mut self, gl: &WebGl2RenderingContext, trail: &EngineTrail) {
+        gl.uniform4f(
+            self.uniform_trail_color.as_ref(),
+            trail.color.0,
+            trail.color.1,
+            trail.color.2,
+            trail.color.3,
+        );
+
+        gl.uniform1f(
+            self.uniform_trail_percent_offset.as_ref(),
+            trail.get_percent_offset(),
+        );
+
+        let point_buffer = trail.path_data_buffers();
+        gl.uniform1i(self.uniform_point_buffer_length.as_ref(), trail.length());
+        gl.uniform4fv_with_f32_array(self.uniform_point_buffer.as_ref(), &point_buffer);
 
         gl.draw_arrays(
             WebGl2RenderingContext::TRIANGLE_STRIP,
